@@ -1,12 +1,16 @@
 from difflib import SequenceMatcher
 import inspect
+from command import command
 
 
 class CLA(object):
     def __init__(self, prefix="CLA>"):
         self.prefix = prefix
-        self.commands = []  # Implement a dictionary registry thingy
-        self.helps = []
+        self.commands = []
+        """
+        Flag: --flag
+        Param: -variable value
+        """
 
     def run(self):
         "TODO: Write ability to do --param value"
@@ -16,7 +20,10 @@ class CLA(object):
                 help = True
 
         while True:
-            line = input(self.prefix).lower()
+            try:
+                line = input(self.prefix).lower()
+            except KeyboardInterrupt:
+                exit()
             inputted_command = line.split()[0]
 
             # Parse command into command and arguments
@@ -35,6 +42,16 @@ class CLA(object):
                             args.append(tmp[arg])
                 else:
                     count -= 1
+            
+            flags = []
+            parameters = {}
+            for arg in range(0, len(args)):
+                if args[arg][:2] == "--":
+                    flags.append(args[arg].replace("--", ""))
+                elif args[arg][:1] == "-":
+                    parameters[args[arg]] = args[arg + 1].replace("-", "")
+            #print(flags)
+            #print(parameters)
 
             for command in self.commands:
                 if command.name != inputted_command:
@@ -55,13 +72,13 @@ class CLA(object):
                         if inputted_command == "help" and not help:
                             self.help()
                         else:
-                            self.commands[self.commands.index(command)].execute(*args)
-                            #print(self.commands[self.commands.index(command)])
+                            print(args)
+                            self.commands[self.commands.index(command)].execute(flags, parameters)
                     except TypeError:
                         # print(f"Command '{self.commands[self.commands.index(command)].__name__}' missing required parameters.")
-                        required_parameters = inspect.getargspec(self.commands[self.commands.index(command)].function)
-                        pass
-    
+                        required_parameters = str(inspect.signature(self.commands[self.commands.index(command)].function)).replace(")", "").replace("(", "").replace(",", "").split(",")
+                        print("Required parameters:", required_parameters)
+
     def help(self):
         print("~help\tDisplays this menu.")
         for command in self.commands:
@@ -69,9 +86,9 @@ class CLA(object):
 
 
 
-    def command(self, name="Unknown command", callName="Uknown command", aliases=[], help="No help given"):
+    def command(self, name="Unknown command", callName="Uknown command", aliases=[], flags=[], parameters=[], declareVariables=False, help="No help given"):
         def wrap(function):
-            self.commands.append(command(function, name=name, callName=callName, aliases=aliases, help=help))
+            self.commands.append(command(function, name=name, callName=callName, aliases=aliases, flags=flags, parameters=parameters, declareVariables=declareVariables, help=help))
             # print(f"[CLA]: Registered command '{name}'")
             def wrapped_function(*args):
                 return function(*args)
@@ -79,27 +96,12 @@ class CLA(object):
         return wrap
 
 
-class command(object):
-    def __init__(self, function, name, callName, aliases=[], requiresArgument=False, help="No help given"):
-        self.function = function
-        #self.params = params
-        self.name = name
-        self.callName = callName
-        self.aliases = aliases
-        self.requiresArgument = requiresArgument
-        self.help = help
-
-    def execute(self, params):
-        self.function(*params)
-
-
-
 app = CLA(">")
 
-@app.command(name="test", callName="test", aliases=["test", "tst"], help="test command")
-def test(e):
+@app.command(name="test", callName="test", aliases=["test", "tst"], flags=[], parameters=["e"], declareVariables=False, help="test command")
+def test(*args, **kwargs):
     print("Command 'test' executed.")
-    print(e)
+    print(args, kwargs)
 
 
 app.run()
