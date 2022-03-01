@@ -1,6 +1,7 @@
 from difflib import SequenceMatcher
 import inspect
 from command import command
+import exceptions
 
 
 class CLA(object):
@@ -47,9 +48,9 @@ class CLA(object):
             parameters = {}
             for arg in range(0, len(args)):
                 if args[arg][:2] == "--":
-                    flags.append(args[arg].replace("--", ""))
+                    flags.append(args[arg][2:])
                 elif args[arg][:1] == "-":
-                    parameters[args[arg]] = args[arg + 1].replace("-", "")
+                    parameters[args[arg][1:]] = args[arg + 1]
             #print(flags)
             #print(parameters)
 
@@ -73,7 +74,10 @@ class CLA(object):
                             self.help()
                         else:
                             print(args)
-                            self.commands[self.commands.index(command)].execute(flags, parameters)
+                            try:
+                                print(self.commands[self.commands.index(command)].execute(flags, parameters))
+                            except exceptions.unexpectedFlag:
+                                print(f"Command {self.commands[self.commands.index(command)]} recieved unexpected flag.")
                     except TypeError:
                         # print(f"Command '{self.commands[self.commands.index(command)].__name__}' missing required parameters.")
                         required_parameters = str(inspect.signature(self.commands[self.commands.index(command)].function)).replace(")", "").replace("(", "").replace(",", "").split(",")
@@ -96,12 +100,24 @@ class CLA(object):
         return wrap
 
 
-app = CLA(">")
+app = CLA("dp>")
 
 @app.command(name="test", callName="test", aliases=["test", "tst"], flags=[], parameters=["e"], declareVariables=False, help="test command")
-def test(*args, **kwargs):
+def test(**kwargs):
     print("Command 'test' executed.")
-    print(args, kwargs)
+    # Don't have to use this if you don't want to. This is simply to catch errors
+    try:
+        parameters = kwargs["parameters"]
+    except KeyError:
+        parameters = {}
+    try:
+        flags = kwargs["flags"]
+    except KeyError:
+        flags = {}
+
+    e = parameters["e"]
+
+    return e 
 
 
 app.run()
