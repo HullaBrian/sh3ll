@@ -1,5 +1,4 @@
 from difflib import SequenceMatcher
-import inspect
 from command import command
 import exceptions
 
@@ -14,7 +13,6 @@ class CLA(object):
         """
 
     def run(self):
-        "TODO: Write ability to do --param value"
         help = False
         for command in self.commands:
             if command.name == "help":
@@ -51,37 +49,37 @@ class CLA(object):
                     flags.append(args[arg][2:])
                 elif args[arg][:1] == "-":
                     parameters[args[arg][1:]] = args[arg + 1]
-            #print(flags)
-            #print(parameters)
 
             for command in self.commands:
                 if command.name != inputted_command:
                     if inputted_command == "help" and not help:
                             self.help()
                             continue
-                    highestSimiliarity = 0
-                    mostSimilarCommandId = -1
-                    for command in self.commands:
-                        similarity = SequenceMatcher(None, command.name, inputted_command).ratio()
-                        if similarity > highestSimiliarity:
-                            highestSimiliarity = SequenceMatcher(None, command.name, inputted_command).ratio()
-                            mostSimilarCommandId = command.name
-                    print(f"Command not recongnized.\nDid you mean: '{mostSimilarCommandId}'?")
+                    cmds = [cmd.name for cmd in self.commands]
+                    if inputted_command not in cmds:
+                        highestSimiliarity = 0
+                        mostSimilarCommandId = -1
+                        for command in self.commands:
+                            similarity = SequenceMatcher(None, command.name, inputted_command).ratio()
+                            if similarity > highestSimiliarity:
+                                highestSimiliarity = SequenceMatcher(None, command.name, inputted_command).ratio()
+                                mostSimilarCommandId = command.name
+                        print(f"Command not recognized.\nDid you mean: '{mostSimilarCommandId}'?")
+                        break
                 else:
                     try:
                         # print(help)
                         if inputted_command == "help" and not help:
                             self.help()
                         else:
-                            print(args)
                             try:
                                 print(self.commands[self.commands.index(command)].execute(flags, parameters))
                             except exceptions.unexpectedFlag:
                                 print(f"Command {self.commands[self.commands.index(command)]} recieved unexpected flag.")
                     except TypeError:
                         # print(f"Command '{self.commands[self.commands.index(command)].__name__}' missing required parameters.")
-                        required_parameters = str(inspect.signature(self.commands[self.commands.index(command)].function)).replace(")", "").replace("(", "").replace(",", "").split(",")
-                        print("Required parameters:", required_parameters)
+                        # required_parameters = str(inspect.signature(self.commands[self.commands.index(command)].function)).replace(")", "").replace("(", "").replace(",", "").split(",")
+                        print("Missing required parameters")
 
     def help(self):
         print("~help\tDisplays this menu.")
@@ -90,34 +88,11 @@ class CLA(object):
 
 
 
-    def command(self, name="Unknown command", callName="Uknown command", aliases=[], flags=[], parameters=[], declareVariables=False, help="No help given"):
+    def command(self, name="Unknown command", callName="Uknown command", aliases=[], flags=[], parameters=[], help="No help given"):
         def wrap(function):
-            self.commands.append(command(function, name=name, callName=callName, aliases=aliases, flags=flags, parameters=parameters, declareVariables=declareVariables, help=help))
+            self.commands.append(command(function, name=name, callName=callName, aliases=aliases, flags=flags, parameters=parameters, help=help))
             # print(f"[CLA]: Registered command '{name}'")
             def wrapped_function(*args):
                 return function(*args)
             return wrapped_function
         return wrap
-
-
-app = CLA("dp>")
-
-@app.command(name="test", callName="test", aliases=["test", "tst"], flags=[], parameters=["e"], declareVariables=False, help="test command")
-def test(**kwargs):
-    print("Command 'test' executed.")
-    # Don't have to use this if you don't want to. This is simply to catch errors
-    try:
-        parameters = kwargs["parameters"]
-    except KeyError:
-        parameters = {}
-    try:
-        flags = kwargs["flags"]
-    except KeyError:
-        flags = {}
-
-    e = parameters["e"]
-
-    return e 
-
-
-app.run()
