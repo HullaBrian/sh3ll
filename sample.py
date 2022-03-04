@@ -4,18 +4,17 @@ from main import CLA
 app = CLA("dp>")
 
 @app.command(name="test", callName="test", aliases=["test", "tst"], flags=[], parameters=["e"], help="test command")
-def test(**kwargs):
-    print("Command 'test' executed.")
-    parameters = kwargs["parameters"]
+def test(ctx):
+    parameters = ctx.parameters
 
     e = parameters["e"]
+    print(e)
 
-    return e 
 
+@app.command(name="add", callName="add", aliases=["add", "a"], flags=[], parameters=["v1", "v2"], help="Add command")
+def add(ctx):
+    parameters = ctx.parameters
 
-@app.command(name="add", callName="add", aliases=["add", "a"], flags=[], parameters=["value1", "value2"], help="test2 command")
-def add(**kwargs):
-    parameters = kwargs["parameters"]
-    return int(parameters["value1"]) + int(parameters["value2"])
+    print(int(parameters["v1"]) + int(parameters["v2"]))
 
 app.run()

@@ -51,29 +51,28 @@ class CLA(object):
                     parameters[args[arg][1:]] = args[arg + 1]
 
             for command in self.commands:
-                if command.name != inputted_command:
+                if command.callName != inputted_command:
                     if inputted_command == "help" and not help:
-                            self.help()
-                            continue
-                    cmds = [cmd.name for cmd in self.commands]
+                        self.help()
+                        break
+                    cmds = [cmd.callName for cmd in self.commands]
                     if inputted_command not in cmds:
                         highestSimiliarity = 0
                         mostSimilarCommandId = -1
                         for command in self.commands:
-                            similarity = SequenceMatcher(None, command.name, inputted_command).ratio()
+                            similarity = SequenceMatcher(None, command.callName, inputted_command).ratio()
                             if similarity > highestSimiliarity:
-                                highestSimiliarity = SequenceMatcher(None, command.name, inputted_command).ratio()
-                                mostSimilarCommandId = command.name
+                                highestSimiliarity = SequenceMatcher(None, command.callName, inputted_command).ratio()
+                                mostSimilarCommandId = command.callName
                         print(f"Command not recognized.\nDid you mean: '{mostSimilarCommandId}'?")
                         break
                 else:
                     try:
-                        # print(help)
                         if inputted_command == "help" and not help:
                             self.help()
                         else:
                             try:
-                                print(self.commands[self.commands.index(command)].execute(flags, parameters))
+                                self.commands[self.commands.index(command)].execute(flags, parameters)
                             except exceptions.unexpectedFlag:
                                 print(f"Command {self.commands[self.commands.index(command)]} recieved unexpected flag.")
                     except TypeError:
@@ -81,7 +80,7 @@ class CLA(object):
                         # required_parameters = str(inspect.signature(self.commands[self.commands.index(command)].function)).replace(")", "").replace("(", "").replace(",", "").split(",")
                         print("Missing required parameters")
 
-    def help(self):
+    def help(self, params=[]):
         print("~help\tDisplays this menu.")
         for command in self.commands:
             print(f"~{command.name}\t{command.help}")

@@ -1,5 +1,5 @@
 import exceptions
-
+from ctx import ctx
 
 class command(object):
     def __init__(self, function, name, callName, aliases=[], flags=[], parameters=[], help="No help given"):
@@ -12,6 +12,10 @@ class command(object):
         self.help = help  # Help dialouge
 
     def execute(self, flags, parameters):
+        if flags[0] == "help":
+                self.runHelp()
+                return
+
         if len(self.flags) > 0:
             for flag in self.flags:
                 if flag not in flags:
@@ -33,8 +37,17 @@ class command(object):
                 missing.append(x)
 
         if count == len(self.parameters):
-            return str(self.function(parameters=parameters))
+            self.function(ctx(parameters, flags))
         else:
             for missing_param in missing:
                 parameters[missing_param] = ""
-            return str(self.function(parameters=parameters))
+            self.function(ctx(parameters, flags))
+    
+    def runHelp(self):
+        print(f"USAGE: {self.callName}", end="")
+        for parameter in self.parameters:
+            print(f" -{parameter} VALUE", end="")
+        print(" ", end="")
+        for flag in self.flags:
+            print(f" --{flag}", end="")
+        print()
