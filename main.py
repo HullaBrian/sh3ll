@@ -80,7 +80,7 @@ class CLA(object):
                         # required_parameters = str(inspect.signature(self.commands[self.commands.index(command)].function)).replace(")", "").replace("(", "").replace(",", "").split(",")
                         print("Missing required parameters")
 
-    def help(self, params=[]):
+    def help(self):
         print("~help\tDisplays this menu.")
         for command in self.commands:
             print(f"~{command.name}\t{command.help}")
