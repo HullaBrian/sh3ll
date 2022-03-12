@@ -1,6 +1,5 @@
 from difflib import SequenceMatcher
 from command import command
-import exceptions
 
 
 class CLA(object):
@@ -8,7 +7,6 @@ class CLA(object):
         self.prefix = prefix
         self.commands = []
         """
-        Flag: --flag
         Param: -variable value
         """
 
@@ -42,12 +40,9 @@ class CLA(object):
                 else:
                     count -= 1
             
-            flags = []
             parameters = {}
             for arg in range(0, len(args)):
-                if args[arg][:2] == "--":
-                    flags.append(args[arg][2:])
-                elif args[arg][:1] == "-":
+                if args[arg][:1] == "-":
                     parameters[args[arg][1:]] = args[arg + 1]
 
             for command in self.commands:
@@ -71,10 +66,7 @@ class CLA(object):
                         if inputted_command == "help" and not help:
                             self.help()
                         else:
-                            try:
-                                self.commands[self.commands.index(command)].execute(flags, parameters)
-                            except exceptions.unexpectedFlag:
-                                print(f"Command {self.commands[self.commands.index(command)]} recieved unexpected flag.")
+                            self.commands[self.commands.index(command)].execute(parameters)
                     except TypeError:
                         # print(f"Command '{self.commands[self.commands.index(command)].__name__}' missing required parameters.")
                         # required_parameters = str(inspect.signature(self.commands[self.commands.index(command)].function)).replace(")", "").replace("(", "").replace(",", "").split(",")
@@ -87,9 +79,9 @@ class CLA(object):
 
 
 
-    def command(self, name="Unknown command", callName="Uknown command", aliases=[], flags=[], parameters=[], help="No help given"):
+    def command(self, name="Unknown command", callName="Uknown command", aliases=[], parameters=[], help="No help given"):
         def wrap(function):
-            self.commands.append(command(function, name=name, callName=callName, aliases=aliases, flags=flags, parameters=parameters, help=help))
+            self.commands.append(command(function, name=name, callName=callName, aliases=aliases, parameters=parameters, help=help))
             # print(f"[CLA]: Registered command '{name}'")
             def wrapped_function(*args):
                 return function(*args)
