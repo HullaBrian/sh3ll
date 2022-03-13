@@ -3,19 +3,14 @@ from main import CLA
 
 app = CLA("dp>")
 
-@app.command(name="test", callName="test", aliases=["test", "tst"], parameters=["e"], help="test command")
+@app.command(name="test", callName="test", aliases=["test", "tst"], help="test command")
 def test(ctx):
-    parameters = ctx.parameters
-
-    e = parameters["e"]
-    print(e)
+    print(ctx.parameters)
 
 
-@app.command(name="add", callName="add", aliases=["add", "a"], parameters=["v1", "v2"], help="Add command")
+@app.command(name="add", callName="add", aliases=["add", "a"], help="Add command")
 def add(ctx):
-    parameters = ctx.parameters
-
-    print(int(parameters["v1"]) + int(parameters["v2"]))
+    print(int(ctx.parameters[0]) + int(ctx.parameters[1]))
 
 
 app.run()

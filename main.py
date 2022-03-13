@@ -40,18 +40,13 @@ class CLA(object):
                 else:
                     count -= 1
             
-            parameters = {}
-            for arg in range(0, len(args)):
-                if args[arg][:1] == "-":
-                    parameters[args[arg][1:]] = args[arg + 1]
-            
 
             cmds = [cmd.name for cmd in self.commands]
             if inputted_command != "help":
                 try:
                     command_index = cmds.index(inputted_command)
                     try:
-                        self.commands[command_index].execute(parameters)
+                        self.commands[command_index].execute(args)
                     except KeyError:
                         print("Missing required parameters!")
                         flag = True
@@ -60,7 +55,7 @@ class CLA(object):
                     for command in self.commands:
                         if inputted_command in command.aliases:
                             try:
-                                self.commands[self.commands.index(command)].execute(parameters)
+                                self.commands[self.commands.index(command)].execute(args)
                             except KeyError:
                                 print("Missing required parameters!")
                             flag = True
@@ -84,11 +79,14 @@ class CLA(object):
 
 
 
-    def command(self, name="Unknown command", callName="Uknown command", aliases=[], parameters=[], help="No help given"):
+    def command(self, name="Unknown command", callName="Uknown command", aliases=[], help="No help given"):
         def wrap(function):
-            self.commands.append(command(function, name=name, callName=callName, aliases=aliases, parameters=parameters, help=help))
+            self.commands.append(command(function, name=name, callName=callName, aliases=aliases, help=help))
             # print(f"[CLA]: Registered command '{name}'")
             def wrapped_function(*args):
                 return function(*args)
             return wrapped_function
         return wrap
+    
+    def comand_catagory(self):
+        pass
