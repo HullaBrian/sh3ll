@@ -44,14 +44,27 @@ class CLA(object):
             for arg in range(0, len(args)):
                 if args[arg][:1] == "-":
                     parameters[args[arg][1:]] = args[arg + 1]
+            
 
-            for command in self.commands:
-                if command.callName != inputted_command:
-                    if inputted_command == "help" and not help:
-                        self.help()
-                        break
-                    cmds = [cmd.callName for cmd in self.commands]
-                    if inputted_command not in cmds:
+            cmds = [cmd.name for cmd in self.commands]
+            if inputted_command != "help":
+                try:
+                    command_index = cmds.index(inputted_command)
+                    try:
+                        self.commands[command_index].execute(parameters)
+                    except KeyError:
+                        print("Missing required parameters!")
+                        flag = True
+                except ValueError:
+                    flag = False
+                    for command in self.commands:
+                        if inputted_command in command.aliases:
+                            try:
+                                self.commands[self.commands.index(command)].execute(parameters)
+                            except KeyError:
+                                print("Missing required parameters!")
+                            flag = True
+                    if not flag:
                         highestSimiliarity = 0
                         mostSimilarCommandId = -1
                         for command in self.commands:
@@ -60,17 +73,9 @@ class CLA(object):
                                 highestSimiliarity = SequenceMatcher(None, command.callName, inputted_command).ratio()
                                 mostSimilarCommandId = command.callName
                         print(f"Command not recognized.\nDid you mean: '{mostSimilarCommandId}'?")
-                        break
-                else:
-                    try:
-                        if inputted_command == "help" and not help:
-                            self.help()
-                        else:
-                            self.commands[self.commands.index(command)].execute(parameters)
-                    except TypeError:
-                        # print(f"Command '{self.commands[self.commands.index(command)].__name__}' missing required parameters.")
-                        # required_parameters = str(inspect.signature(self.commands[self.commands.index(command)].function)).replace(")", "").replace("(", "").replace(",", "").split(",")
-                        print("Missing required parameters")
+            else:
+                self.help()
+
 
     def help(self):
         print("~help\tDisplays this menu.")
