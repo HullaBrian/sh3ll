@@ -1,4 +1,4 @@
-from main import CLA
+from ISM import CLA
 
 
 app = CLA("dp>")
