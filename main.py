@@ -12,11 +12,6 @@ class CLA(object):
         """
 
     def run(self):
-        help = False
-        for command in self.commands:
-            if command.name == "help":
-                help = True
-
         while True:
             try:
                 line = input(self.prefix).lower()
