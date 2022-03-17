@@ -3,6 +3,7 @@ from main import CLA
 
 app = CLA("dp>")
 
+
 @app.command(name="test", callName="test", aliases=["test", "tst"], help="test command", category="get")
 def test(ctx):
     print(ctx.parameters)
