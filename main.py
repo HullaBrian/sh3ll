@@ -120,7 +120,3 @@ class CLA(object):
     
     def comand_catagory(self, cat):
         self.categories.append(cat)
-
-
-if __name__ == "__main__":
-    import sample
