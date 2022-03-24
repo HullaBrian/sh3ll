@@ -1,5 +1,5 @@
 from difflib import SequenceMatcher
-from command import command
+from ISM.command import command
 
 
 class CLA(object):
@@ -66,7 +66,6 @@ class CLA(object):
             else:
                 self.help()
 
-
     def help(self):
         print("help\tDisplays this menu")
         for command in self.commands:
@@ -101,17 +100,14 @@ class CLA(object):
                     print(f"{command.help}" + (" " * abs(longest_help - len(command.help))))
                 print()
 
-
     def command(self, name="Unknown command", callName="Uknown command", aliases=[], help="No help given", category=""):
         def wrap(function):
             if category not in self.categories:
                 self.categories.append(category)  # Auto register cats
             self.commands.append(command(function, name=name, callName=callName, aliases=aliases, help=help, category=category))
             # print(f"[CLA]: Registered command '{name}'")
+
             def wrapped_function(*args):
                 return function(*args)
             return wrapped_function
         return wrap
-    
-    def comand_catagory(self, cat):
-        self.categories.append(cat)

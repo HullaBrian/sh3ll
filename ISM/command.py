@@ -1,5 +1,6 @@
 from ctx import ctx
 
+
 class command(object):
     def __init__(self, function, name, callName, aliases=[], help="No help given", category=""):
         self.function = function  # Function to call when command is executed
