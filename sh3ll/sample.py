@@ -1,7 +1,7 @@
-from main import CLA
+from main import IS
 
 
-app = CLA("dp>")
+app = IS("dp>")
 
 
 @app.command(name="test", callName="test", aliases=["test", "tst"], help="test command", category="get")

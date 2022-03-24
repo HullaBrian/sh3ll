@@ -2,7 +2,7 @@ from difflib import SequenceMatcher
 from sh3ll.command import command
 
 
-class CLA(object):
+class IS(object):
     def __init__(self, prefix="CLA>"):
         self.prefix = prefix
         self.commands = []
