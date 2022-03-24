@@ -1,5 +1,5 @@
 from difflib import SequenceMatcher
-from ISM.command import command
+from sh3ll.command import command
 
 
 class CLA(object):
