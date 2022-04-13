@@ -1,20 +1,20 @@
-from main import IS
+from sh3ll import IS
 
 
-app = IS("dp>")
+app = IS("Depth-Finder", "dp>")
 
 
-@app.command(name="test", callName="test", aliases=["test", "tst"], help="test command", category="get")
+@app.command(name="test", aliases=["test", "tst"], help="test command")
 def test(ctx):
     print(ctx.parameters)
 
 
-@app.command(name="add", callName="add", aliases=["add", "a"], help="Add command", category="operator")
+@app.command(name="add", aliases=["add", "a"], help="Add command", category="operator")
 def add(ctx):
     print(int(ctx.parameters[0]) + int(ctx.parameters[1]))
 
 
-@app.command(name="multiply", callName="multiply", aliases=["m", "multi"], help="Multiply command", category="operator")
+@app.command(name="multiply", aliases=["m", "multi"], help="Multiply command", category="operator")
 def multiply(ctx):
     print(ctx.parameters)
     print("M:", int(ctx.parameters[0]) * int(ctx.parameters[1]))

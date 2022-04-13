@@ -1,13 +1,15 @@
 # __init__.py
 
-__version__ = "1.0.3"  # Be sure to update version in setup.py as well
+__version__ = "1.1.0"  # Be sure to update version in setup.py as well
 
 from difflib import SequenceMatcher
 from sh3ll.command import command
+from art import tprint
 
 
 class IS(object):
-    def __init__(self, prefix="CLA>"):
+    def __init__(self, name="", prefix="CLA>"):
+        self.name = name
         self.prefix = prefix
         self.commands = []
         self.categories = []
@@ -16,6 +18,8 @@ class IS(object):
         """
 
     def run(self):
+        tprint(self.name + "\n")
+
         while True:
             try:
                 line = input(self.prefix).lower()
@@ -59,14 +63,18 @@ class IS(object):
                             if line.split()[1] in command.aliases:
                                 command.execute(args[1:])
                 else:
-                    highestSimiliarity = 0
-                    mostSimilarCommandId = -1
+                    highestSimilarity = 0
+                    mostSimilarCommand = ""
+                    mostSimilarCommandCategory = ""
+
                     for command in self.commands:
-                        similarity = SequenceMatcher(None, command.callName, inputted_command).ratio()
-                        if similarity > highestSimiliarity:
-                            highestSimiliarity = SequenceMatcher(None, command.callName, inputted_command).ratio()
-                            mostSimilarCommandId = command.callName
-                    print(f"Command not recognized.\nDid you mean: '{mostSimilarCommandId}'?")
+                        similarity = SequenceMatcher(None, command.name, inputted_command).ratio()
+                        if similarity > highestSimilarity:
+                            highestSimilarity = SequenceMatcher(None, command.name, inputted_command).ratio()
+                            mostSimilarCommand = command.name
+                            mostSimilarCommandCategory = command.category
+
+                    print(f"Command not recognized.\nDid you mean: '{mostSimilarCommandCategory} {mostSimilarCommand}'?")
             else:
                 self.help()
 
@@ -110,12 +118,12 @@ class IS(object):
                     print(f"{command.help}" + (" " * abs(longest_help - len(command.help))))
                 print()
 
-    def command(self, name="Unknown command", callName="Uknown command", aliases=[], help="No help given", category=""):
+    def command(self, name="Unknown command", aliases=[], help="No help given", category=""):
         def wrap(function):
             if category not in self.categories:
                 self.categories.append(category)  # Auto register cats
             self.commands.append(
-                command(function, name=name, callName=callName, aliases=aliases, help=help, category=category))
+                command(function, name=name, aliases=aliases, help=help, category=category))
 
             # print(f"[CLA]: Registered command '{name}'")
 
