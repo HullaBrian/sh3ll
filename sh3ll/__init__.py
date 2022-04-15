@@ -1,6 +1,6 @@
 # __init__.py
 
-__version__ = "1.1.1"  # Be sure to update version in setup.py as well
+__version__ = "1.1.3"  # Be sure to update version in setup.py as well
 
 from difflib import SequenceMatcher
 from sh3ll.command import command
@@ -8,8 +8,9 @@ from art import tprint
 
 
 class IS(object):
-    def __init__(self, name="", prefix="CLA>"):
+    def __init__(self, name="", font="", prefix="CLA>"):
         self.name = name
+        self.font = font
         self.prefix = prefix
         self.commands = []
         self.categories = []
@@ -18,7 +19,10 @@ class IS(object):
         """
 
     def run(self):
-        tprint(self.name + "\n")
+        if self.font != "":
+            tprint(self.name, font=self.font)
+        else:
+            tprint(self.name)
 
         while True:
             try:
@@ -45,16 +49,16 @@ class IS(object):
                     count -= 1
 
             cmds = [cmd.name for cmd in self.commands]
-            catagories = [cmd.category for cmd in self.commands]
+            categories = [cmd.category for cmd in self.commands]
 
             aliases = {}
             for command in self.commands:
                 aliases[command.name] = command.aliases
 
-            if inputted_command != "help":
+            if inputted_command != "help" and inputted_command != "exit" and inputted_command != "q":
                 if inputted_command in cmds and self.commands[cmds.index(inputted_command)].category == "":
                     self.commands[cmds.index(inputted_command)].execute(args)
-                elif inputted_command in catagories:
+                elif inputted_command in categories:
                     if line.split()[1] in cmds:
                         if self.commands[cmds.index(line.split()[1])].category == line.split()[0]:
                             self.commands[cmds.index(line.split()[1])].execute(args[1:])
@@ -76,10 +80,14 @@ class IS(object):
 
                     print(f"Command not recognized.\nDid you mean: '{mostSimilarCommandCategory} {mostSimilarCommand}'?")
             else:
-                self.help()
+                if inputted_command == "help":
+                    self.help()
+                else:
+                    exit()
 
     def help(self):
         print("help\tDisplays this menu")
+        print("exit OR q\tExits the program")
         for command in self.commands:
             if command.category == "":
                 print(f"{command.name}\t{command.help}")

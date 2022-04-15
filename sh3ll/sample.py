@@ -1,7 +1,7 @@
 from sh3ll import IS
 
 
-app = IS("Depth-Finder", "dp>")
+app = IS(name="Depth-Finder", prefix="dp>")
 
 
 @app.command(name="test", aliases=["test", "tst"], help="test command")
