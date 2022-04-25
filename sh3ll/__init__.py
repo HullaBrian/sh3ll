@@ -1,6 +1,6 @@
 # __init__.py
 
-__version__ = "1.1.3"  # Be sure to update version in setup.py as well
+__version__ = "1.2.0"  # Be sure to update version in setup.py as well
 
 from difflib import SequenceMatcher
 from sh3ll.command import command
@@ -80,10 +80,7 @@ class IS(object):
 
                     print(f"Command not recognized.\nDid you mean: '{mostSimilarCommandCategory} {mostSimilarCommand}'?")
             else:
-                if inputted_command == "help":
-                    self.help()
-                else:
-                    exit()
+                self.help() if inputted_command == "help" else exit()
 
     def help(self):
         print("help\tDisplays this menu")
@@ -126,14 +123,11 @@ class IS(object):
                     print(f"{command.help}" + (" " * abs(longest_help - len(command.help))))
                 print()
 
-    def command(self, name="Unknown command", aliases=[], help="No help given", category=""):
+    def command(self, name="Unknown command", aliases=[], help="No help given", category="", progress=()):
         def wrap(function):
             if category not in self.categories:
                 self.categories.append(category)  # Auto register cats
-            self.commands.append(
-                command(function, name=name, aliases=aliases, help=help, category=category))
-
-            # print(f"[CLA]: Registered command '{name}'")
+            self.commands.append(command(function, name=name, aliases=aliases, help=help, category=category, progress=progress))
 
             def wrapped_function(*args):
                 return function(*args)
