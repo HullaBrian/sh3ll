@@ -15,6 +15,6 @@ class ProgressBar(object):
             self.position += value
 
             if self.position == self.end - self.start:
-                print(self)
+                print(self, flush=True)
             else:
-                print(self, end="\r")
+                print(self, end="\r", flush=True)

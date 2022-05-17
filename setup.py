@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="sh3ll",
-    version="1.2.0",  # Be sure to update the version in __init__.py as well
+    version="1.2.2",  # Be sure to update the version in __init__.py as well
     description="An interactive shell application maker",
     long_description=README,
     long_description_content_type="text/markdown",

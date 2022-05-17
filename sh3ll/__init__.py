@@ -1,6 +1,6 @@
 # __init__.py
 
-__version__ = "1.2.0"  # Be sure to update version in setup.py as well
+__version__ = "1.2.2"  # Be sure to update version in setup.py as well
 
 from difflib import SequenceMatcher
 from sh3ll.command import command
