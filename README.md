@@ -23,7 +23,7 @@ Neither of these parameters are required, but are highly recommended
 After this, you need to create some commands:
 
 ```
-@app.command(name="", callName="", aliases=["", ""], help="", category="", progress=(start, end))
+@app.command(name="", aliases=["", ""], help="", category="", progress=(start, end))
 def test(ctx):
     print(ctx.parameters)
 ```
@@ -46,14 +46,14 @@ sh3ll features a slew of features:
 # Command Categories
 To use a command inside of a category, all that needs to be done is specify the category name within the command decorator:
 
-`@app.command(name="", callName="", aliases=["", ""], help="", category="", progress=(start, end))`
+`@app.command(name="", aliases=["", ""], help="", category="", progress=(start, end))`
 
 and sh3ll will do the rest of the work for you! Now, when trying to call your command you must use the category before you can call the command. This allows for more accurate command names.
 
 Below is an example of a command that has been categorized under the "get" category:
 
 ```
-@app.command(name="test", callName="test", aliases=["test", "tst"], help="test command", category="get")
+@app.command(name="test", aliases=["test", "tst"], help="test command", category="get")
 def test(ctx):
     print(ctx.parameters)
 ```
